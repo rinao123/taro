@@ -1,36 +1,27 @@
 import Taro, { General, request } from '@tarojs/taro';
-import CommonUtil from './CommonUtil';
+import CommonUtil from './commonUtil';
+import logUtil from './logUtil';
 
-export interface HttpOptions {
-    header?: General.IAnyObject;
-    method?: keyof request.method;
+export interface HttpOptions extends request.Option {
     showFail?: boolean;
 }
 
 type Method = keyof request.method;
 
 class HttpUtil {
-    public static instance: HttpUtil | null = null;
     public static readonly HEADER_SKEY: string = 'X-WX-Skey';
     private skey: string;
 
-    private constructor() {
+    public constructor() {
         this.skey = '';
-    }
-
-    public static getInstance = (): HttpUtil => {
-        if (!HttpUtil.instance) {
-            HttpUtil.instance = new HttpUtil();
-        }
-        return HttpUtil.instance;
     }
 
     public request = async (url: string, option: HttpOptions) => {
         option.header = this.addContentTypeToHeader(option.header, option.method);
         option.header = this.addSkeyToHeader(option.header);
         try {
-            const options = { url: url, header: option.header, method: option.method };
-            const response = await Taro.request(options);
+            option.url = url;
+            const response = await Taro.request(option);
             console.log(url, option, response);
             if (response.statusCode === 401) {
                 if (option.showFail !== false) {
@@ -45,7 +36,7 @@ class HttpUtil {
             }
             return response;
         } catch (error) {
-            // log.warn(url, options, error);
+            logUtil.warn(url, option, error);
             console.warn(url, option, error);
             if (option.showFail !== false) {
                 CommonUtil.showFail('网络请求失败，请检查您的网络状态');
@@ -57,7 +48,7 @@ class HttpUtil {
     public saveSkey = (skey: string): void => {
         this.skey = skey;
         Taro.setStorageSync(HttpUtil.HEADER_SKEY, skey);
-      }
+    }
 
     private getSkey = (): string => {
         return Taro.getStorageSync(HttpUtil.HEADER_SKEY) || '';
@@ -93,4 +84,4 @@ class HttpUtil {
     }
 }
 
-export default HttpUtil.getInstance();
+export default new HttpUtil();

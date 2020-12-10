@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro';
-import { Color } from 'src/common/defines';
+import { Color } from '../common/defines';
 
 export default class CommonUtil {
     public static showFail = (content: string): void => {
