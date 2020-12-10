@@ -1,46 +1,47 @@
 import Taro, { RealtimeLogManager } from '@tarojs/taro';
 
 class LogUtil {
-	private log: RealtimeLogManager | null = null;
+	private _log: RealtimeLogManager | null = null;
 
 	constructor() {
-		this.log = Taro.getRealtimeLogManager ? Taro.getRealtimeLogManager() : null;
+		this._log = Taro.getRealtimeLogManager ? Taro.getRealtimeLogManager() : null;
 	}
 
 	public info = (...args: Array<any>): void => {
-		if (!this.log) {
+		if (!this._log) {
 			return;
 		}
-		this.log.info(...args);
+		this._log.info(...args);
 	}
 
 	public warn = (...args: Array<any>): void => {
-		if (!this.log) {
+		if (!this._log) {
 			return;
 		}
-		this.log.warn(...args);
+		this._log.warn(...args);
 	}
 
 	public error = (...args: Array<any>): void => {
-		if (!this.log) {
+		if (!this._log) {
 			return;
 		}
-		this.log.error(...args);
+		this._log.error(...args);
 	}
 
 	public setFilterMsg = (msg: string): void => {
-		if (!this.log || !this.log.setFilterMsg) {
+		if (!this._log || !this._log.setFilterMsg) {
 			return;
 		}
-		this.log.setFilterMsg(msg);
+		this._log.setFilterMsg(msg);
 	}
 
 	public addFilterMsg = (msg: string): void => {
-		if (!this.log || !this.log.addFilterMsg) {
+		if (!this._log || !this._log.addFilterMsg) {
 			return;
 		}
-		this.log.addFilterMsg(msg);
+		this._log.addFilterMsg(msg);
 	}
 }
 
-export default new LogUtil();
+const logUtil = new LogUtil();
+export default logUtil;
