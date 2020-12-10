@@ -1,0 +1,108 @@
+@import '../../styles/colors.scss';
+
+.dividingRuler {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    color: $white;
+}
+
+.value {
+    font-size: 60px;
+    font-weight: bold;
+    color: $white;
+}
+
+.unit {
+    font-size: 28px;
+    color: $white;
+}
+
+.rulerContainer {
+    align-self: center;
+    margin-bottom: 20px;
+    width: 710px;
+    height: 120px;
+    border-radius: 8px;
+    background-color: $lightBlack;
+}
+
+.ruler {
+    display: flex;
+}
+
+.distance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.dividings {
+    display: flex;
+}
+
+.dividing {
+    margin-right: 20px;
+    width: 4px;
+    height: 30px;
+    background-color: $white;
+    opacity: 0.5;
+}
+
+.dividing.middle {
+    height: 40px;
+}
+
+.dividing.long {
+    height: 50px;
+}
+
+.dividing.last {
+    margin-right: 0;
+    width: 2px;
+}
+
+.dividing.first {
+    width: 2px;
+}
+
+.dividing.nothing {
+    margin-right: 20px;
+    width: 0;
+}
+
+.text {
+    margin-top: 5px;
+    font-size: 30px;
+    color: $white;
+    line-height: 40px;
+}
+
+.current {
+    position: absolute;
+    top: 108px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 8px;
+    height: 50px;
+    background-color: green;
+}
