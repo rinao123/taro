@@ -1,67 +1,69 @@
 import React, { Component } from 'react';
-import { View, Button, Text } from '@tarojs/components';
-import { observer, inject } from 'mobx-react';
+import { View } from '@tarojs/components';
+import { observer } from 'mobx-react';
 import DividingRuler from '../../components/dividingRuler/dividingRuler';
-import './index.scss';
+import IndexController from '../../controllers/indexController';
+import styles from './index.module.scss';
 
-
-type PageStateProps = {
-	store: {
-		counterStore: {
-			counter: number,
-			increment: Function,
-			decrement: Function,
-			incrementAsync: Function
-		}
-	}
-}
-
-interface Index {
-	props: PageStateProps;
-}
-
-@inject('store')
 @observer
-class Index extends Component {
-	componentWillMount() { }
+export default class Index extends Component {
+	private _controller: IndexController;
 
-	componentDidMount() { }
-
-	componentWillUnmount() { }
-
-	componentDidShow() { }
-
-	componentDidHide() { }
-
-	increment = () => {
-		const { counterStore } = this.props.store
-		counterStore.increment()
+	constructor(props: any) {
+		super(props);
+		this._controller = new IndexController();
 	}
 
-	decrement = () => {
-		const { counterStore } = this.props.store
-		counterStore.decrement()
-	}
-
-	incrementAsync = () => {
-		const { counterStore } = this.props.store
-		counterStore.incrementAsync()
-	}
-
-	render() {
-		const { counterStore: { counter } } = this.props.store
+	public render() {
+		const { height, startWeight, targetWeight } = this._controller;
 		return (
-			<View className='index'>
-				<View className='dividingRuler'>
-					<DividingRuler min={140} max={200} step={10} title="身高" unit="厘米" />
+			<View className={styles.index}>
+				<View className={styles.dividingRuler}>
+					<DividingRuler 
+						min={130} 
+						max={220} 
+						step={10} 
+						value={height} 
+						title="身高" 
+						unit="厘米"
+						onChange={this._onHeightChange}
+					/>
 				</View>
-				<Button onClick={this.increment}>+</Button>
-				<Button onClick={this.decrement}>-</Button>
-				<Button onClick={this.incrementAsync}>Add Async</Button>
-				<Text>{counter}</Text>
+				<View className={styles.dividingRuler}>
+					<DividingRuler 
+						min={40} 
+						max={150} 
+						step={1} 
+						value={startWeight} 
+						title="起始体重" 
+						unit="公斤"
+						onChange={this._onStartWeightChange}
+					/>
+				</View>
+				<View className={styles.dividingRuler}>
+					<DividingRuler 
+						min={40} 
+						max={150} 
+						step={1} 
+						value={targetWeight} 
+						title="目标体重" 
+						unit="公斤"
+						onChange={this._onTargetWeightChange}
+					/>
+				</View>
 			</View>
-		)
+		);
+	}
+
+	private _onHeightChange = (value: number): void => {
+		this._controller.height = value;
+	}
+
+	private _onStartWeightChange = (value: number): void => {
+		this._controller.startWeight = value;
+	}
+
+	private _onTargetWeightChange = (value: number): void => {
+		this._controller.targetWeight = value;
 	}
 }
-
-export default Index

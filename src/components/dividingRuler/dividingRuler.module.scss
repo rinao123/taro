@@ -10,7 +10,6 @@
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     margin-top: 10px;
     margin-bottom: 5px;
     margin-left: 20px;
@@ -18,20 +17,25 @@
 }
 
 .title {
+    flex: 1;
     font-size: 32px;
     font-weight: bold;
     color: $white;
 }
 
 .value {
+    flex: 1;
     font-size: 60px;
     font-weight: bold;
+    text-align: center;
     color: $white;
 }
 
 .unit {
+    flex: 1;
     font-size: 28px;
     color: $white;
+    text-align: right;
 }
 
 .rulerContainer {

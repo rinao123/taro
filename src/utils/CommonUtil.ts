@@ -20,6 +20,11 @@ export default class CommonUtil {
 		});
 	}
 
+	public static rpxToPx = (rpx: number): number => {
+		const systemInfo = Taro.getSystemInfoSync();
+		return (systemInfo.screenWidth / 750) * rpx;
+	}
+
 	public static sleep = (milliseconds: number): Promise<void> => {
 		return new Promise((resolve) => setTimeout(resolve, milliseconds));
 	}

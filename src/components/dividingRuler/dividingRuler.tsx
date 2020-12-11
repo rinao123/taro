@@ -1,28 +1,29 @@
 import React, { Component, ReactElement } from 'react';
 import { View, Text, ScrollView, BaseEventOrig } from '@tarojs/components';
-import styles from './dividingRuler.module.scss';
 import { ScrollViewProps } from '@tarojs/components/types/ScrollView';
+import CommonUtil from '../../utils/commonUtil';
+import styles from './dividingRuler.module.scss';
 
 interface DividingRulerProps {
     min: number;
     max: number;
     step: number;
+    value: number;
     title: string;
     unit: string;
+    onChange: (value: number) => void;
 }
 
-interface DividingRulerState {
-    current: number;
-}
+export default class DividingRuler extends Component<DividingRulerProps> {
+    public static readonly DIVIDING_WIDTH: number = CommonUtil.rpxToPx(24);
+    private _scrollEndTimer: NodeJS.Timer | null;
 
-export default class DividingRuler extends Component<DividingRulerProps, DividingRulerState> {
-
-    public constructor(props: DividingRulerProps) {
+    constructor(props: DividingRulerProps) {
         super(props);
-        this.state = { current: 155 };
+        this._scrollEndTimer = null;
     }
 
-    public render = (): ReactElement => {
+    render() {
         return (
             <View className={styles.dividingRuler}>
                 {this._renderHeader()}
@@ -33,31 +34,29 @@ export default class DividingRuler extends Component<DividingRulerProps, Dividin
     }
 
     private _renderHeader = (): ReactElement => {
-        const { title, unit } = this.props;
-        const { current } = this.state;
+        const { title, unit, value } = this.props;
         return (
             <View className={styles.header}>
                 <Text className={styles.title}>{title}</Text>
-                <Text className={styles.value}>{current}</Text>
+                <Text className={styles.value}>{value}</Text>
                 <Text className={styles.unit}>{unit}</Text>
             </View>
         );
     }
 
     private _renderRuler = (): ReactElement => {
-        const { min, max, step } = this.props;
-        const { current } = this.state;
+        const { min, max, step, value } = this.props;
+        const scrollLeft: number = (value - min - 1.5 * step) * 10 / step * DividingRuler.DIVIDING_WIDTH;
         let distances: Array<ReactElement> = [];
         for (let i = min + step; i <= max - step; i += step) {
             const distance = this._renderDistance(i);
             distances.push(distance);
         }
         return (
-            <ScrollView 
-                className={styles.rulerContainer} 
-                scrollX={true} 
-                scrollWithAnimation={false} 
-                scrollLeft={(current - 155) * 10} 
+            <ScrollView
+                className={styles.rulerContainer}
+                scrollX={true}
+                scrollLeft={scrollLeft}
                 onScroll={this._onScroll}
             >
                 <View className={styles.ruler}>
@@ -122,7 +121,21 @@ export default class DividingRuler extends Component<DividingRulerProps, Dividin
     }
 
     private _onScroll = (event: BaseEventOrig<ScrollViewProps.onScrollDetail>): void => {
-        const current = Math.round(155 + event.detail.scrollLeft / 10);
-        this.setState({ current: current });
+        const { min, step } = this.props;
+        if (this._scrollEndTimer) {
+            clearTimeout(this._scrollEndTimer);
+            this._scrollEndTimer = null;
+        }
+        this._scrollEndTimer = setTimeout(() => {
+            let value = min + (15 + event.detail.scrollLeft / DividingRuler.DIVIDING_WIDTH) * step / 10;
+            value = Math.round(value / (step / 10)) * (step / 10);
+            let fractionDigits = 0;
+            const strs = (step / 10).toString().split(".");
+            if (strs.length > 1) {
+                fractionDigits = strs[1].length;
+            }
+            value = parseFloat(value.toFixed(fractionDigits));
+            this.props.onChange(value);
+        }, 300);
     }
 }
